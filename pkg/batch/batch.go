@@ -1,6 +1,10 @@
 package batch
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 // Batch is a struct that represents a batch of chocolate as it is refined
 type Batch struct {
@@ -13,6 +17,8 @@ type Batch struct {
 	CacaoPercentage       float64
 	CacaoButterPercentage float64
 	Recipe                Recipe
+	StartedAt             time.Time
+	EndedAt               time.Time
 }
 
 // NewBatch is a constructor for Batch
@@ -25,6 +31,9 @@ func NewBatch(name string) *Batch {
 
 // AddEvent adds a new event to a batch. It will update the status of the batch if necessary. Adding the first ingredient will cause the status to become refining. Ending the batch will cause the status to become ended.
 func (b *Batch) AddEvent(event *BatchEvent) {
+	if len(b.Events) == 0 {
+		b.StartedAt = time.Now()
+	}
 	b.Events = append(b.Events, *event)
 	// Modify the status only for interesting events
 	switch event.Type {
@@ -32,6 +41,7 @@ func (b *Batch) AddEvent(event *BatchEvent) {
 		b.Status = RefingStatus
 	case EndBatchEvent:
 		b.Status = EndedStatus
+		b.EndedAt = time.Now()
 	}
 }
 
@@ -69,4 +79,12 @@ func (b *Batch) ParseEvents() {
 		MilkPowder:  int(milkWeight),
 		Other:       int(otherWeight),
 	}
+}
+
+// RefiningTime returns the timeDelta between the start and end of a batch. If the batch is not ended, it will return the timeDelta between the start and now.
+func (b *Batch) RefiningTime() time.Duration {
+	if b.EndedAt.IsZero() {
+		return time.Since(b.StartedAt)
+	}
+	return b.EndedAt.Sub(b.StartedAt)
 }

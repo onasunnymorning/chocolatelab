@@ -1,6 +1,9 @@
 package batch
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestNewBatch(t *testing.T) {
 	name := "Hello\nWorld"
@@ -80,5 +83,37 @@ func TestParseEvents(t *testing.T) {
 
 	if b.Recipe != expectedRecipe {
 		t.Errorf("ParseEvents() failed, expected Recipe %+v, got %+v", expectedRecipe, b.Recipe)
+	}
+}
+func TestRefiningTime(t *testing.T) {
+	startedAt := time.Now().Add(-time.Hour)
+	endedAt := time.Now()
+
+	b := &Batch{
+		StartedAt: startedAt,
+		EndedAt:   endedAt,
+	}
+
+	expectedDuration := endedAt.Sub(startedAt)
+	actualDuration := b.RefiningTime()
+
+	if actualDuration != expectedDuration {
+		t.Errorf("RefiningTime() failed, expected duration %v, got %v", expectedDuration, actualDuration)
+	}
+}
+
+func TestRefiningTimeNotEnded(t *testing.T) {
+	startedAt := time.Now().Add(-time.Hour)
+
+	b := &Batch{
+		StartedAt: startedAt,
+	}
+
+	actualDuration := b.RefiningTime()
+	oneHour := time.Duration(time.Hour * 1)
+
+	// Expected duration is just over one hour (at most a few milli- or microseconds, so definately less than a minute)
+	if actualDuration < oneHour || actualDuration > oneHour+time.Minute {
+		t.Errorf("RefiningTime() failed, expected duration to be just over one hour, got %v", actualDuration)
 	}
 }
