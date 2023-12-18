@@ -1,10 +1,12 @@
 package batch
 
-import "gorm.io/gorm"
+import "time"
 
 // Origin is a struct that represents the origin of an ingredient
 type Origin struct {
-	gorm.Model
+	ID          uint `gorm:"primaryKey"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 	Name        string
 	Ingredients []Ingredient
 }

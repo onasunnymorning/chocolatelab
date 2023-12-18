@@ -8,6 +8,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/onasunnymorning/chocolatelab/app/api"
+	"github.com/onasunnymorning/chocolatelab/pkg/batch"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -20,6 +21,7 @@ import (
 func main() {
 	godotenv.Load()
 	db := SetupDB()
+	db.AutoMigrate(&batch.Origin{}, &batch.Ingredient{}, &batch.Batch{}, &batch.BatchEvent{})
 	h := api.NewBaseHandler(db)
 
 	r := gin.Default()

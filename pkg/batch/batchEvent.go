@@ -1,15 +1,18 @@
 package batch
 
-import "gorm.io/gorm"
+import "time"
 
 // BatchEvent is a struct that represents an event that occurs during the refinement of a batch of chocolate
 type BatchEvent struct {
-	gorm.Model
-	BatchID    uint
-	Type       string
-	Notes      string
-	Ingredient Ingredient
-	Quantity   int // in grams
+	ID           uint `gorm:"primaryKey"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	BatchID      uint
+	Type         string
+	Notes        string
+	IngredientID uint
+	Ingredient   Ingredient
+	Quantity     int // in grams
 }
 
 // NewBatchEvent is a constructor for BatchEvent

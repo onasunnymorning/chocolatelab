@@ -2,13 +2,13 @@ package batch
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 // Batch is a struct that represents a batch of chocolate as it is refined
 type Batch struct {
-	gorm.Model
+	ID                    uint `gorm:"primaryKey"`
+	CreatedAt             time.Time
+	UpdatedAt             time.Time
 	Name                  string
 	Notes                 string
 	Events                []BatchEvent
@@ -16,7 +16,7 @@ type Batch struct {
 	OutputWeight          int // in grams
 	CacaoPercentage       float64
 	CacaoButterPercentage float64
-	Recipe                Recipe
+	Recipe                Recipe `gorm:"-"` // We don't store this in the database, just on the object after ParseEvents()
 	StartedAt             time.Time
 	EndedAt               time.Time
 }

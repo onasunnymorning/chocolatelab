@@ -1,13 +1,15 @@
 package batch
 
-import "gorm.io/gorm"
+import "time"
 
 // Ingredient is a struct that represents an ingredient in a batch
 type Ingredient struct {
-	gorm.Model
-	Name     string
-	OriginID uint
-	Type     string
+	ID        uint `gorm:"primaryKey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Name      string
+	OriginID  uint
+	Type      string
 }
 
 // NewIngredient is a constructor for Ingredient
